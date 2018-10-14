@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Home</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+  <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+  <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+</head>
+
+<body>
+  <main class="container">
+    <a href="/key">Download public key file</a>
+    <form method="POST" action="/paiement">
+      <input type="submit" value="Payer">
+      <input name="PBX_SITE" value="1999888">
+      <input name="PBX_RANG" value="32">
+      <input name="PBX_IDENTIFIANT" value="110647233">
+      <input name="PBX_TOTAL" value="999">
+      <input name="PBX_2MONT1" value="111">
+      <input name="PBX_2MONT2" value="222">
+      <input name="PBX_2MONT3" value="333">
+      <input name="PBX_DEVISE" value="978">
+      <input name="PBX_CMD" value="TEST Paybox">
+      <input name="PBX_PORTEUR" value="test@paybox.com">
+      <input name="PBX_RETOUR" value="Mt:M;Ref:R;Auto:A;Erreur:E;Signatt:K">
+      <input name="PBX_HASH" value="SHA512">
+      <input name="PBX_TIME" value="2013-10-11T09:42:08+00:00">
+      <input name="PBX_HMAC" value="D47AB2FDC9ADF9669651C6F8F785F698FB77C75AE314D0060A0528B434F4FE12BA3D027D066A1E8038FA56E7704EC882AA8E44FB36D44957A0F5BA8BE03E03E9">
+      <input name="PBX_EFFECTUE" value="http://127.0.0.1/effectue">
+	    <input name="PBX_REFUSE" value="http://127.0.0.1/refuse">
+	    <input name="PBX_ANNULE" value="http://127.0.0.1/annule">
+	    <input name="PBX_ATTENTE" value="http://127.0.0.1/attente">
+    </form>
+  </main>
+</body>
+
+</html>
