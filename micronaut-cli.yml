@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: payboxtestserver
+---
+testFramework: junit
+sourceLanguage: java

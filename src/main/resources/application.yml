@@ -1,0 +1,14 @@
+micronaut:
+    application:
+        name: PayboxTestServer
+                
+#Uncomment to set server port
+    server:
+        port: 8080
+        
+    router:
+        static:
+            resources:
+                enabled: true
+                mapping: /static/**
+                paths: classpath:public

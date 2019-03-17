@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Home</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+  <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+  <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+</head>
+
+<body>
+  <main class="container">
+    <h1>SERVEUR DE TEST PAYBOX</h1>
+    {{#this}}
+    <form id="send_ipn">
+      <div class="container">
+      <input type="submit" value="IPN">
+
+{{#with values}}
+{{#if pBX_2MONT1}}
+      <a href="#" class="button button-outline" onclick="echeance({{pBX_2MONT1}}, 1);return false;">ECHEANCE 1&#9473;{{pBX_2MONT1}}&euro;</a>
+{{/if}}
+{{#if pBX_2MONT2}}
+      <a href="#" class="button button-outline" onclick="echeance({{pBX_2MONT2}}, 2);return false;">ECHEANCE 2&#9473;{{pBX_2MONT2}}&euro;</a>
+{{/if}}
+{{#if pBX_2MONT3}}
+	    <a href="#" class="button button-outline" onclick="echeance({{pBX_2MONT3}}, 3);return false;">ECHEANCE 3&#9473;{{pBX_2MONT3}}&euro;</a>
+{{/if}}
+
+        <div class="row">
+          <div class="column">
+            <label for="delay">Delai avant l'envoie ipn (minutes):</label>
+            <input type="number" name="delay" min="0" value="0"><BR>
+          </div>
+          <div class="column">
+            <label>Code erreur:</label>
+            <select id="PBX_ERREUR" name="{{PBX_ERREUR}}" onchange="updateHREFs()">
+              {{#each ERREURS}}
+              <option value="{{value}}" {{#selected}} selected="selected" {{/selected}}>{{name}}</option>
+              {{/each}}
+            </select>      
+          </div>
+        </div>
+      
+        <div class="row">
+          {{#each formValues}}
+          <div class="column">
+            <label for="{{@key}}">{{@key}}</label>
+            <input name="{{@key}}" value="{{this}}">
+          </div>
+          {{/each}}
+          
+        </div>
+      </div>
+      <input type="hidden" name="K" value="{{K}}">
+    </form>
+    <h4>Retour marchand :</h4>
+    <a id="PBX_EFFECTUE" class="button button-outline" onclick="retour('{{pbxEffectue}}', false, false);return false;">effectue</a>
+    <a id="PBX_REFUSE" class="button button-outline" onclick="retour('{{pbxRefuse}}', false, true);return false;">refuse</a>
+    <a id="PBX_ANNULE" class="button button-outline" onclick="retour('{{pbxAnnule}}', true, false);return false;">annule</a>
+    <a id="PBX_ATTENTE" class="button button-outline" onclick="retour('{{pbxAttente}}', false, false);return false;">attente</a>
+{{/with}}
+  <script>
+    window.addEventListener("load", function () {
+      function sendData() {
+        var XHR = new XMLHttpRequest();
+
+        // Bind the FormData object and the form element
+        var FD = new FormData(form);
+
+        // Define what happens on successful data submission
+        XHR.addEventListener("load", function (event) {
+          alert(event.target.responseText);
+        });
+
+        // Define what happens in case of error
+        XHR.addEventListener("error", function (event) {
+          alert('Oops! Something went wrong.');
+        });
+
+        // Define what happens in case of error
+        XHR.addEventListener("progress", function (event) {
+          console.log("ipn --- " + event);
+        });
+
+        // Set up our request
+        XHR.open("POST", "ipn");
+
+        console.log("ipn --- send");
+        
+        var object = {};
+        FD.forEach(function(value, key){
+            object[key] = value;
+        });
+
+        XHR.setRequestHeader("Content-Type", "application/json");
+
+        // The data sent is what the user provided in the form
+        XHR.send(JSON.stringify(object));
+      }
+
+      // Access the form element...
+      var form = document.getElementById("send_ipn");
+
+      // ...and take over its submit event.
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        sendData();
+      });
+    });
+
+    function retour(adresse, annule, refuse) {
+      function signData(parameters, dest) {
+        return new Promise(function(resolve, reject) {
+          var XHR = new XMLHttpRequest();
+
+          // Define what happens on successful data submission
+          XHR.addEventListener("load", function (event) {
+            resolve(event.target.responseText);
+          });
+
+          // Define what happens in case of error
+          XHR.addEventListener("error", function (event) {
+            alert('Oops! Something went wrong.');
+            reject();
+          });
+
+          // Set up our request
+          XHR.open("GET", "sign?" + parameters);
+
+          // The data sent is what the user provided in the form
+          XHR.send();
+        });
+      }
+
+      var form = document.getElementById("send_ipn");
+      var FD = new FormData(form);
+
+      if (FD.get("{{PBX_ERREUR}}") === "00000") {
+        FD.delete("{{PBX_AUTORISATION}}")
+        FD.delete("PBX_REPONDRE_A");
+        FD.delete("delay");
+        if(annule) {
+          FD.set("{{PBX_ERREUR}}", "00117");
+        } else if (refuse) {
+          FD.set("{{PBX_ERREUR}}", "00105");
+        }
+      }
+
+      var splittedAdress = adresse.split("?");
+      var parameters = serialize(FD);
+      if (splittedAdress.length > 1) {
+        parameters = splittedAdress[1] + "&" + parameters;
+      }
+      signData(parameters)
+      .then(function (signed) {
+        window.location.href = splittedAdress[0] + "?" + signed;
+      });
+      
+    }
+
+    function serialize(formData) {
+      var serial = "";
+      var first = true;
+      formData.forEach(function(value, key){
+        if (first) {
+          first = false;
+        } else {
+          serial += "&";
+        }
+        serial += key + "=" + value;
+      });
+
+      return serial;
+    }
+
+    function echeance(montant, echeance) {
+      var form = document.getElementById("send_ipn");
+      var XHR = new XMLHttpRequest();
+
+      // Bind the FormData object and the form element
+      var FD = new FormData(form);
+
+      // Define what happens on successful data submission
+      XHR.addEventListener("load", function (event) {
+        alert(event.target.responseText);
+      });
+
+      // Define what happens in case of error
+      XHR.addEventListener("error", function (event) {
+        alert('Oops! Something went wrong.');
+      });
+
+      // Define what happens in case of error
+      XHR.addEventListener("progress", function (event) {
+        console.log("ipn --- " + event);
+      });
+
+      // Set up our request
+      XHR.open("POST", "ipn");
+
+      console.log("ipn --- send");
+      
+      var keyMontant = FD.get("M");
+      var keyTransaction = FD.get("S");
+
+      var object = {};
+      FD.forEach(function(value, key){
+        if (key === "{{M}}") {
+          object[key] = montant;
+        } else if (key === "{{S}}") {
+          object[key] = value + "_" + echeance;
+        } else {
+          object[key] = value;
+        }
+      });
+
+      XHR.setRequestHeader("Content-Type", "application/json");
+
+      // The data sent is what the user provided in the form
+      XHR.send(JSON.stringify(object));
+    }
+  </script>
+    {{/this}}
+  </main>
+</body>
+
+</html>
