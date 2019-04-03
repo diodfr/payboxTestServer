@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.paris.lutece.plugins.paybox.PayboxUtil;
-import io.micronaut.http.HttpParameters;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -40,10 +39,12 @@ import io.micronaut.http.client.RxHttpClient;
 import io.micronaut.http.server.types.files.AttachedFile;
 import io.micronaut.scheduling.TaskExecutors;
 import io.micronaut.scheduling.TaskScheduler;
+import io.micronaut.validation.Validated;
 import io.micronaut.views.View;
 import paybox.CodeErreur;
 
 @Controller("/")
+@Validated
 public class PaiementController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PaiementController.class);
 
@@ -65,7 +66,21 @@ public class PaiementController {
 	@View("pay")
 	@Post(value = "/paiement", consumes = MediaType.APPLICATION_FORM_URLENCODED)
 	public HttpResponse<Map<String, Object>> paiement(@Valid MessagePaiement values) {
+		return traiterRequete(values);
+	}
 
+	@View("pay")
+	@Get(value = "/paiement{?messagePaiement*}")
+	public HttpResponse<Map<String, Object>> paiementEnGet(@Valid MessagePaiement messagePaiement) {
+		return traiterRequete(messagePaiement);
+	}
+
+	/**
+	 * Traitement de la requête de paiement
+	 * @param values les données de la requête
+	 * @return
+	 */
+	private HttpResponse<Map<String, Object>> traiterRequete(MessagePaiement values) {
 		ParameterCommand parameterCommand = new ParameterCommand();
 		Map<String,Object> parameters = new HashMap<>();
 
