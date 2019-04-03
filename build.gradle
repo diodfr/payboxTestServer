@@ -35,6 +35,7 @@ dependencies {
     compile "io.micronaut:micronaut-views"
     compile "io.micronaut:micronaut-management"
     compile "io.mikael:urlbuilder:2.0.9"
+    compile "io.micronaut.configuration:micronaut-hibernate-validator"
     compileOnly "io.micronaut:micronaut-inject-java"
     runtime "ch.qos.logback:logback-classic:1.2.3"
     runtime "com.github.jknack:handlebars:4.1.0"

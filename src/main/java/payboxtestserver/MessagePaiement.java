@@ -1,5 +1,7 @@
 package payboxtestserver;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -8,16 +10,27 @@ public class MessagePaiement {
 	public static final String ERROR_VALUE_TO_BE_REPLACED = "REPLACE_THIS_VALUE_BY_ERROR";
 
 	// Obligatoires
+	@NotBlank
 	String PBX_SITE; //Numéro de site (fourni par Verifone)
+	@NotBlank
 	String PBX_RANG; //Numéro de rang (fourni par Verifone)
+	@NotBlank
 	String PBX_IDENTIFIANT; //Identifiant interne (fourni par Verifone)
+	@NotBlank
 	String PBX_TOTAL; //Montant total de la transaction
+	@NotBlank
 	String PBX_DEVISE; //Devise de la transaction
+	@NotBlank
 	String PBX_CMD; //Référence commande côté commerçant
+	@NotBlank
 	String PBX_PORTEUR; //Adresse E-mail de l’acheteur
+	@NotBlank
 	String PBX_RETOUR; //Liste des variables qui seront retournées par Verifone
+	@NotBlank
 	String PBX_HASH; //Type d’algorithme de hachage pour le calcul de l’empreinte
+	@NotBlank
 	String PBX_TIME; //Horodatage de la transaction
+	@NotBlank
 	String PBX_HMAC; //Signature calculée avec la clé secrète
 
 	// Optionnels

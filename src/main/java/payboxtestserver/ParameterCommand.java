@@ -14,8 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.validation.Valid;
 
-import io.mikael.urlbuilder.UrlBuilder;
-
 
 public class ParameterCommand {
 
