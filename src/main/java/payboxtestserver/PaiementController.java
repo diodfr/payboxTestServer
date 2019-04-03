@@ -77,7 +77,7 @@ public class PaiementController {
 
 	/**
 	 * Traitement de la requête de paiement
-	 * @param values les données de la requêtes
+	 * @param values les données de la requête
 	 * @return
 	 */
 	private HttpResponse<Map<String, Object>> traiterRequete(MessagePaiement values) {
